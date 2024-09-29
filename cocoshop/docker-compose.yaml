@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: mydb  # Имя базы данных
+      POSTGRES_USER: myuser  # Пользователь базы данных
+      POSTGRES_PASSWORD: mypassword  # Пароль пользователя
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Для хранения данных вне контейнера
+    ports:
+      - "5432:5432"  # Пробрасываем порт 5432
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code  # Монтируем весь проект в контейнер
+    ports:
+      - "8000:8000"  # Пробрасываем порт для доступа к Django
+    depends_on:
+      - db  # Сервис web будет ждать готовности базы данных
+
+volumes:
+  postgres_data:

@@ -1,0 +1,15 @@
+# Используем официальный образ Python
+FROM python:3.9
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /code
+
+# Копируем файл зависимостей и устанавливаем пакеты
+COPY requirements.txt /code/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Копируем все файлы проекта в контейнер
+COPY . /code/
+
+# Выполняем миграции при запуске контейнера
+CMD ["python", "manage.py", "migrate"]
