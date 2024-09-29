@@ -36,7 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'rest_framework',
     'django.contrib.staticfiles',
+    'shop.apps.ShopConfig'
 ]
 
 MIDDLEWARE = [
@@ -75,8 +77,12 @@ WSGI_APPLICATION = 'cocoshop.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydb',          # Имя базы данных (то же, что указано в POSTGRES_DB)
+        'USER': 'myuser',         # Пользователь базы данных (то же, что указано в POSTGRES_USER)
+        'PASSWORD': 'mypassword', # Пароль (то же, что указано в POSTGRES_PASSWORD)
+        'HOST': 'db',             # "db" — это имя сервиса из docker-compose
+        'PORT': '5432',           # Стандартный порт PostgreSQL
     }
 }
 
