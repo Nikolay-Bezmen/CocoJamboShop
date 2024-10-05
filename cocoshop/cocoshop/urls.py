@@ -1,9 +1,9 @@
-# project/urls.py
+# myproject/urls.py
 
 from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('shop.urls')),  # Подключаем маршруты приложения
+    path('shop/', include('shop.urls'))  # Подключаем маршруты приложения
 ]
