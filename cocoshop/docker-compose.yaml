@@ -4,6 +4,8 @@ services:
   db:
     image: postgres:13
     container_name: postgres_db
+    networks:
+      - djangonetwork
     restart: always
     environment:
       POSTGRES_DB: mydb  # Имя базы данных
@@ -23,6 +25,12 @@ services:
       - "8000:8000"  # Пробрасываем порт для доступа к Django
     depends_on:
       - db  # Сервис web будет ждать готовности базы данных
-
+    links:
+      - db:db
+    networks:
+      - djangonetwork
+networks:
+    djangonetwork:
+        driver: bridge
 volumes:
   postgres_data:

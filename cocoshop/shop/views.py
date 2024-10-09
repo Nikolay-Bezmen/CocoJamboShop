@@ -1,5 +1,6 @@
 # shop/views.py
 
+from django.contrib.auth import login, authenticate
 from rest_framework import generics
 from .serializers import UserSerializer
 from django.shortcuts import render, redirect
@@ -7,15 +8,18 @@ from django.contrib import messages
 from .forms import UserRegistrationForm
 from .models import User  # Используйте вашу модель
 
+
 class UserListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all()  # Замените на вашу модель
     serializer_class = UserSerializer
+
 
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()  # Замените на вашу модель
     serializer_class = UserSerializer
 
-def register(request):
+
+def user_register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -24,9 +28,10 @@ def register(request):
             return redirect('login')  # Перенаправление на страницу логина после успешной регистрации
     else:
         form = UserRegistrationForm()
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'cocoshop/registration/register.html', {'form': form})
 
-def login(request):
+
+def user_login(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
@@ -38,5 +43,13 @@ def login(request):
             # Вывод сообщения об ошибке
             error_message = "Неверные имя пользователя или пароль."
             return render(request, 'login/login.html', {'error_message': error_message})
-    
-    return render(request, 'login/login.html')
+
+    return render(request, 'cocoshop/login/login.html')
+
+
+def home(request):
+    return render(request, 'cocoshop/main/index.html')
+
+
+def shopping_cart(request):
+    return render(request, 'cocoshop/main/shoppingCart.html')
