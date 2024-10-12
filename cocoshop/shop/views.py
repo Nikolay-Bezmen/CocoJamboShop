@@ -28,7 +28,7 @@ def user_register(request):
             return redirect('login')  # Перенаправление на страницу логина после успешной регистрации
     else:
         form = UserRegistrationForm()
-    return render(request, 'cocoshop/registration/register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})
 
 
 def user_login(request):
@@ -44,12 +44,12 @@ def user_login(request):
             error_message = "Неверные имя пользователя или пароль."
             return render(request, 'login/login.html', {'error_message': error_message})
 
-    return render(request, 'cocoshop/login/login.html')
+    return render(request, 'login/login.html')
 
 
 def home(request):
-    return render(request, 'cocoshop/main/index.html')
+    return render(request, 'main/index.html')
 
 
 def shopping_cart(request):
-    return render(request, 'cocoshop/main/shoppingCart.html')
+    return render(request, 'main/shoppingCart.html')
