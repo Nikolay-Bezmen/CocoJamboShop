@@ -2,20 +2,22 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-# class UserRegistrationTest(TestCase):
-#     def test_user_registration(self):
-#         response = self.client.post(reverse('register'), {
-#             'username': 'testuser',
-#             'password1': 'strongpassword123',
-#         })
-#
-#         # Проверяем успешную регистрацию (редирект на страницу логина)
-#         self.assertEqual(response.status_code, 200)
-#         self.assertRedirects(response, reverse('login'))
-#
-#         # Проверяем, что пользователь был создан в базе данных
-#         user = User.objects.filter(username='testuser').exists()
-#         self.assertTrue(user)
+
+class UserRegistrationTest(TestCase):
+    def test_user_registration(self):
+        response = self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'email': 'testuser@example.com',
+            'password': 'strongpassword123',
+            'password_confirm': 'strongpassword123',
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('login'))
+
+        user = User.objects.filter(username='testuser').exists()
+        self.assertTrue(user)
+
 
 class UserLoginTest(TestCase):
     def setUp(self):
@@ -34,6 +36,7 @@ class UserLoginTest(TestCase):
 
         # Проверяем, что пользователь залогинен
         self.assertTrue(response.wsgi_request.user.is_authenticated)
+
 
 class UserLoginFailTest(TestCase):
     def setUp(self):

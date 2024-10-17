@@ -1,22 +1,29 @@
 # shop/views.py
 
 from django.contrib.auth import login, authenticate
+from django.http import HttpResponseNotFound
 from rest_framework import generics
-from .serializers import UserSerializer
+from shop.serializers import UserSerializer
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import UserRegistrationForm
-from .models import User  # Используйте вашу модель
+from shop.forms import UserRegistrationForm
+from shop.models import User, Product  # Используйте вашу модель
+from shop.serializers import ProductSerializer, UserSerializer
 
 
 class UserListCreateView(generics.ListCreateAPIView):
-    queryset = User.objects.all()  # Замените на вашу модель
+    queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()  # Замените на вашу модель
+    queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class ProductListCreateView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
 
 def user_register(request):
@@ -51,5 +58,13 @@ def home(request):
     return render(request, 'main/index.html')
 
 
+def liked(request):
+    return render(request, 'main/liked.html', )
+
+
 def shopping_cart(request):
     return render(request, 'main/shoppingCart.html')
+
+
+def page_not_found(request, exception):
+    return HttpResponseNotFound("Page not found")

@@ -1,11 +1,16 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-      </head>
+        {% load static %}
+    <title>Избранное</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+</head>
 <body>
+{% load static %}
   <header class="header">
     <div class="logo">
       <h1>COCO SHOP</h1>
@@ -22,13 +27,13 @@
     </div>
     
     <div class="icons">
-      <a href="liked.html" class="icon wishlist">
+      <a href="/shop/liked/" class="icon wishlist">
           <i class="heart-icon">&#9829;</i>
           <span class="badge">2</span>
       </a>
 
       <!-- Ссылка на страницу корзины -->
-      <a href="shoppingCart.html" class="icon cart">
+      <a href="/shop/home/shoppingCart" class="icon cart">
           <i class="cart-icon">&#128722;</i>
           <span class="badge">1</span>
       </a>
@@ -36,13 +41,13 @@
   </header>
 
     <div class="container1">
-    <div class="windiw"><h2>Избранное</h2></div>
+    <div class="window"><h2>Избранное</h2></div>
       <!-- Наушники Section -->
       <h2>Наушники</h2>
       <div class="product-grid">
         <a href="">
           <div class="product-card">
-              <img src="../img/Image (1).png" alt="Apple BYZ S852I">
+              <img src="{% static 'images/Image (1).png' %}" alt="Apple BYZ S852I">
               <p>Apple BYZ S852I</p>
               <div class="product-info">
                   <span class="rating">4.7</span>
@@ -52,7 +57,7 @@
         </a>
         <a href="">
           <div class="product-card">
-              <img src="../img/Image (2).png" alt="Apple EarPods">
+              <img src="{% static '/images/Image (2).png' %}" alt="Apple EarPods">
               <p>Apple EarPods</p>
               <div class="product-info">
                   <span class="rating">4.5</span>
@@ -65,7 +70,7 @@
       <div class="product-grid">
         <a href="">
           <div class="product-card">
-              <img src="../img/Image (4).png" alt="Apple BYZ S852I">
+              <img src="{% static '/images/Image (4).png' %}" alt="Apple BYZ S852I">
               <p>Apple BYZ S852I</p>
               <div class="product-info">
                   <span class="rating">4.7</span>
@@ -75,7 +80,7 @@
         </a>
         <a href="">
           <div class="product-card">
-              <img src="../img/Image (5).png" alt="Apple EarPods">
+              <img src="{% static '/images/Image (5).png' %}" alt="Apple EarPods">
               <p>Apple EarPods</p>
               <div class="product-info">
                   <span class="rating">4.5</span>
@@ -85,7 +90,7 @@
         </a>
         <a href="">
           <div class="product-card">
-              <img src="../img/Image (6).png" alt="Apple EarPods Box">
+              <img src="{% static '/images/Image (6).png' %}" alt="Apple EarPods Box">
               <p>Apple EarPods</p>
               <div class="product-info">
                   <span class="rating">4.5</span>
@@ -101,9 +106,9 @@
             <h1>COCO SHOP</h1>
         </div>
         <div class="footer-center">
-          <a href="liked.html" class="footer-btn">Избранное</a>
-          <a href="shoppingCart.html" class="footer-btn">Корзина</a>
-          <a href="/contacts" class="footer-btn">Контакты</a>
+          <a href="/shop/liked/" class="footer-btn">Избранное</a>
+          <a href="/shop/home/shoppingCart" class="footer-btn">Корзина</a>
+          <a href="/shop/contacts" class="footer-btn">Контакты</a>
         </div>
         <div class="footer-right">
             <button class="footer-btn">Условия сервиса</button>
