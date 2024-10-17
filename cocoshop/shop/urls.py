@@ -2,7 +2,7 @@
 
 from django.urls import path
 
-from shop.views.productviews import ProductCreateView, ProductDeleteView, ProductUpdateView, ProductDetailView, ProductListView
+from shop.views.product_views import ProductCreateView, ProductDeleteView, ProductUpdateView, ProductDetailView, ProductListView
 from shop.views.users_views import UserCreateView, UserDeleteView, UserUpdateView, UserListView, UserDetailView
 from shop.views.views import UserListCreateView, UserRetrieveUpdateDestroyView, user_register, user_login, home, shopping_cart, \
     page_not_found, liked

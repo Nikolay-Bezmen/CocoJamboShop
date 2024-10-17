@@ -10,7 +10,7 @@ from django.urls import reverse_lazy
 
 class ProductListView(ListView):
     model = Product
-    template_name = 'products/product_list.html'  # Укажи путь к шаблону
+    template_name = 'products/product_list.html' 
     context_object_name = 'products'
 
 
