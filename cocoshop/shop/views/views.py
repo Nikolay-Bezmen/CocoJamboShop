@@ -7,7 +7,7 @@ from shop.serializers import UserSerializer
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from shop.forms import UserRegistrationForm
-from shop.models import User, Product  # Используйте вашу модель
+from shop.models import User, Products, Categories, CartItems, Carts
 from shop.serializers import ProductSerializer, UserSerializer
 
 
@@ -22,7 +22,7 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ProductListCreateView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
+    queryset = Products.objects.all()
     serializer_class = ProductSerializer
 
 
@@ -30,7 +30,7 @@ def user_register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()  # Используйте метод save() формы
+            user = form.save()
             messages.success(request, 'Your account has been created successfully!')
             return redirect('login')  # Перенаправление на страницу логина после успешной регистрации
     else:
@@ -63,7 +63,11 @@ def liked(request):
 
 
 def shopping_cart(request):
-    return render(request, 'main/shoppingCart.html')
+    user_cart = Carts.objects.get(user=request.user)
+    context = {
+        'cartItems': CartItems.objects.filter(cart=user_cart),
+    }
+    return render(request, 'main/shoppingCart.html', context)
 
 
 def page_not_found(request, exception):

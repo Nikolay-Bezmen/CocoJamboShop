@@ -1,7 +1,7 @@
 # shop/forms.py
 
 from django import forms
-from .models import User, Product
+from .models import User, Products
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -29,7 +29,7 @@ class UserRegistrationForm(forms.ModelForm):
 
 class ProductForm(forms.ModelForm):
     class Meta:
-        model = Product
+        model = Products
         fields = ['name', 'description', 'price', 'stock', 'category', 'brand', 'image']
 
 

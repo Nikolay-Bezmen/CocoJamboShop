@@ -1,7 +1,7 @@
 # shop/serializers.py
 
 from rest_framework import serializers
-from .models import User, Product
+from .models import User, Products
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,5 +12,5 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Product
-        fields = ['id', 'name', 'description', 'price', 'brand', 'category']
+        model = Products
+        fields = ['id', 'name', 'description', 'price', 'brand_id', 'category_id']

@@ -1,10 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Корзина пуста</title>
-    {% load static %}
     <link rel="stylesheet" href="{% static 'css/shoppingCartStyle.css' %}">
     
 </head>
@@ -40,12 +40,29 @@
     </header>
 
     <!-- Основная часть страницы -->
+    {% if cartItems %}
+        {% for item in cartItems %}
+       <div class="product-grid">
+            <a href="">
+            <div class="product-card">
+              <img src="{% static 'images/Image (2).png'%}" alt="Apple EarPods">
+                <p>{{ item.product.name }}</p>
+                    <div class="product-info">
+                        <span class="rating">4.5</span>
+                        <span class="price">50$</span>
+                     </div>
+            </div>
+        </a>
+       </div>
+        {% endfor %}
+    {% else %}
     <main class="cart-empty">
         <img src="{% static 'images/Иллюстрация.png' %}" alt="Пустая корзина" class="cart-image">
         <h2>Корзина пуста</h2>
         <p>Но это никогда не поздно исправить :)</p>
         <a href="{% url 'home' %}" class="btn">В каталог товаров</a>
     </main>
+    {% endif %}
 
     <!-- Футер -->
     <footer>

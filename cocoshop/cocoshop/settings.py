@@ -81,8 +81,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'mydb',  # Имя базы данных (то же, что указано в POSTGRES_DB)
-        'USER': 'myuser',  # Пользователь базы данных (то же, что указано в POSTGRES_USER)
-        'PASSWORD': 'mypassword',  # Пароль (то же, что указано в POSTGRES_PASSWORD)
+        'USER': 'postgres',  # Пользователь базы данных (то же, что указано в POSTGRES_USER)
+        'PASSWORD': '228337',  # Пароль (то же, что указано в POSTGRES_PASSWORD)
         'HOST': 'localhost',  # "db" — это имя сервиса из docker-compose
         'PORT': '5432',  # Стандартный порт PostgreSQL
     }
