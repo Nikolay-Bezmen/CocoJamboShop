@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Избранное</title>
+    {% block css%}
+        
+    {% endblock %}
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <h1>COCO SHOP</h1>
+    </div>
+
+    <div class="SELECTOR">
+      <i class="phone-icon">&#128241;</i>
+      <select>
+        <option value="">Выбрать модель телефона</option>
+        <option value="1">Samsung</option>
+        <option value="2">Poco</option>
+        <option value="3">Lenovo</option>
+      </select>
+    </div>
+    
+    <div class="icons">
+      <a href="{% url "liked" %}" class="icon wishlist">
+          <i class="heart-icon">&#9829;</i>
+          <span class="badge">2</span>
+      </a>
+
+      <!-- Ссылка на страницу корзины -->
+      <a href="{% url "cart" %}" class="icon cart">
+          <i class="cart-icon">&#128722;</i>
+          <span class="badge">1</span>
+      </a>
+  </div>
+  </header>
+{% block content %} {% endblock %}
+  <footer>
+    <div class="footer-container">
+        <div class="footer-left">
+            <h1>COCO SHOP</h1>
+        </div>
+        <div class="footer-center">
+          <a href="{% url "liked" %}" class="footer-btn">Избранное</a>
+          <a href="{% url "cart" %}" class="footer-btn">Корзина</a>
+          <a href="{% url "contacts" %}" class="footer-btn">Контакты</a>
+        </div>
+        <div class="footer-right">
+            <button class="footer-btn">Условия сервиса</button>
+            <div class="language">
+                <button class="footer-btn active-lang">Рус</button>
+                <button class="footer-btn">Eng</button>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

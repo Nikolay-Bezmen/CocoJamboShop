@@ -5,7 +5,7 @@ from django.urls import path
 from shop.views.product_views import ProductCreateView, ProductDeleteView, ProductUpdateView, ProductDetailView, ProductListView
 from shop.views.users_views import UserCreateView, UserDeleteView, UserUpdateView, UserListView, UserDetailView
 from shop.views.views import UserListCreateView, UserRetrieveUpdateDestroyView, user_register, user_login, home, shopping_cart, \
-    page_not_found, liked
+    page_not_found, liked, contacts
 
 urlpatterns = [
     path('users/', UserListCreateView.as_view(), name='user-list-create'),
@@ -17,6 +17,7 @@ urlpatterns = [
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
     path('register/', user_register, name='register'),
     path('products/', ProductListView.as_view(), name='product_list'),
+    path('contacts/', contacts, name='contacts'),
 
     path('products/<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
 

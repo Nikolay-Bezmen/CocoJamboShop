@@ -68,3 +68,7 @@ def shopping_cart(request):
 
 def page_not_found(request, exception):
     return HttpResponseNotFound("Page not found")
+
+
+def contacts(request):
+    return "contacts"
