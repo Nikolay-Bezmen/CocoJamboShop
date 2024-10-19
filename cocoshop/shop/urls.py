@@ -2,11 +2,14 @@
 
 from django.urls import path
 
-from shop.views.product_views import ProductCreateView, ProductDeleteView, ProductUpdateView, ProductDetailView, ProductListView
+from shop.views.product_views import ProductCreateView, ProductDeleteView, ProductUpdateView, ProductDetailView, \
+    ProductListView
 from shop.views.users_views import UserCreateView, UserDeleteView, UserUpdateView, UserListView, UserDetailView
-from shop.views.views import UserListCreateView, UserRetrieveUpdateDestroyView, user_register, user_login, home, shopping_cart, \
-    page_not_found, liked, contacts
-
+from shop.views.views import UserListCreateView, UserRetrieveUpdateDestroyView, user_register, user_login, home, \
+    shopping_cart, \
+    page_not_found, liked, contacts, add_to_cart
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('users/', UserListCreateView.as_view(), name='user-list-create'),
     path('login/', user_login, name='login'),
@@ -18,6 +21,7 @@ urlpatterns = [
     path('register/', user_register, name='register'),
     path('products/', ProductListView.as_view(), name='product_list'),
     path('contacts/', contacts, name='contacts'),
+    path('products/add-to-cart/<int:product_id>/', add_to_cart, name='add_to_cart'),
 
     path('products/<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
 
@@ -35,3 +39,4 @@ urlpatterns = [
 ]
 
 handler404 = page_not_found
+

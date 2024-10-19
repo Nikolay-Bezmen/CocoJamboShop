@@ -1,60 +1,27 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Корзина пуста</title>
-    <link rel="stylesheet" href="{% static 'css/shoppingCartStyle.css' %}">
-    
-</head>
-<body>
-    <!-- Верхняя панель -->
-    <header class="header">
-        <div class="logo">
-            <h1>COCO SHOP</h1>
-        </div>
 
-        <div class="SELECTOR">
-            <i class="phone-icon">&#128241;</i>
-            <select>
-                <option value="">Выбрать модель телефона</option>
-                <option value="1">Samsung</option>
-                <option value="2">Poco</option>
-                <option value="3">Lenovo</option>
-            </select>
-        </div>
+{% block css %}
+	    <link rel="stylesheet" href="{% static 'css/shoppingCartStyle.css' %}">
+{% endblock %}
 
-        <div class="icons">
-            <a href="/shop/liked/" class="icon wishlist">
-                <i class="heart-icon">&#9829;</i>
-                <span class="badge">2</span>
-            </a>
-
-            <!-- Ссылка на страницу корзины -->
-            <a href="{% url 'cart' %}" class="icon cart">
-                <i class="cart-icon">&#128722;</i>
-                <span class="badge">1</span>
-            </a>
-        </div>
-    </header>
-
-    <!-- Основная часть страницы -->
-    {% if cartItems %}
+{% block content %}
+    <main class="mymain">
+	 {% if cartItems %}
+        <div class="product-grid">
         {% for item in cartItems %}
-       <div class="product-grid">
-            <a href="">
+        <a href="">
             <div class="product-card">
-              <img src="{% static 'images/Image (2).png'%}" alt="Apple EarPods">
+              <img src="{{ item.product.image.url }}" alt="Apple EarPods">
                 <p>{{ item.product.name }}</p>
                     <div class="product-info">
                         <span class="rating">4.5</span>
-                        <span class="price">50$</span>
+                        <span class="price">{{ item.product.price }}</span>
                      </div>
             </div>
         </a>
-       </div>
         {% endfor %}
+        </div>
     {% else %}
     <main class="cart-empty">
         <img src="{% static 'images/Иллюстрация.png' %}" alt="Пустая корзина" class="cart-image">
@@ -63,26 +30,7 @@
         <a href="{% url 'home' %}" class="btn">В каталог товаров</a>
     </main>
     {% endif %}
+</main>
+    
+{% endblock %}
 
-    <!-- Футер -->
-    <footer>
-        <div class="footer-container">
-            <div class="footer-left">
-                <h1>COCO SHOP</h1>
-            </div>
-            <div class="footer-center">
-                <a href="/shop/liked/" class="footer-btn">Избранное</a>
-                <a href="{% url 'cart' %}" class="footer-btn">Корзина</a>
-                <a href="/contacts" class="footer-btn">Контакты</a>
-            </div>
-            <div class="footer-right">
-                <button class="footer-btn">Условия сервиса</button>
-                <div class="language">
-                    <button class="footer-btn active-lang">Рус</button>
-                    <button class="footer-btn">Eng</button>
-                </div>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>

@@ -62,6 +62,12 @@ def liked(request):
     return render(request, 'main/liked.html', )
 
 
+def add_to_cart(request, product_id):
+    user_cart = Carts.objects.get(user=request.user)
+    user_items = CartItems.objects.create(cart=user_cart, product=product_id)
+    user_items.quantity += 1
+
+
 def shopping_cart(request):
     user_cart = Carts.objects.get(user=request.user)
     context = {

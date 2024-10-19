@@ -15,9 +15,12 @@
 </head>
 <body>
   <header class="header">
-    <div class="logo">
-      <h1>COCO SHOP</h1>
-    </div>
+    <a href="{% url 'home' %}" class="logo-link">
+        <div class="logo">
+            <h1>COCO SHOP</h1>
+        </div>
+    </a>
+
 
     <div class="SELECTOR">
       <i class="phone-icon">&#128241;</i>
@@ -45,9 +48,11 @@
 {% block content %} {% endblock %}
   <footer>
     <div class="footer-container">
-        <div class="footer-left">
+    <a href="{% url 'home' %}" class="logo-link">
+        <div class="logo">
             <h1>COCO SHOP</h1>
         </div>
+    </a>
         <div class="footer-center">
           <a href="{% url "liked" %}" class="footer-btn">Избранное</a>
           <a href="{% url "cart" %}" class="footer-btn">Корзина</a>
