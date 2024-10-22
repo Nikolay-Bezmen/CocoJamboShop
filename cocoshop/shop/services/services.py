@@ -5,11 +5,6 @@ from shop.models import Products, Carts, CartItems, Categories, Brands, User
 
 class ProductService:
 
-    # @staticmethod
-    # def get_discounted_products():
-    #     products = Products.objects.filter(on_sale=True)
-    #     return products
-
     @staticmethod
     def update_product_stock(product_id, new_quantity):
         product = Products.objects.filter(product_id=product_id).update(quantity=new_quantity)

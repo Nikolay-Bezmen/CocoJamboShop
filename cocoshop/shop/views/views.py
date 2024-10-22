@@ -7,22 +7,19 @@ from shop.serializers import UserSerializer
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from shop.forms import UserRegistrationForm
+from shop.services.services import ProductService, CartServices, CartListService
 from shop.models import User, Products, Categories, CartItems, Carts
-from shop.serializers import ProductSerializer, UserSerializer
+from shop.serializers import ProductSerializer, UserSerializer, OrderSerializer
+from rest_framework import viewsets
 
 
-class UserListCreateView(generics.ListCreateAPIView):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class ProductListCreateView(generics.ListCreateAPIView):
-    queryset = Products.objects.all()
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = ProductService.get_all_products()
     serializer_class = ProductSerializer
 
 
@@ -32,7 +29,7 @@ def user_register(request):
         if form.is_valid():
             user = form.save()
             messages.success(request, 'Your account has been created successfully!')
-            return redirect('login')  # Перенаправление на страницу логина после успешной регистрации
+            return redirect('login')
     else:
         form = UserRegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
@@ -45,9 +42,8 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')  # Перенаправление на главную страницу после входа
+            return redirect('home')
         else:
-            # Вывод сообщения об ошибке
             error_message = "Неверные имя пользователя или пароль."
             return render(request, 'login/login.html', {'error_message': error_message})
 
