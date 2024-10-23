@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "poetry install"
+version = "0.1.0"
+description = ""
+authors = ["Slate2d <slatedazty@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "5.1.1"
+asgiref = "3.8.1"
+djangorestframework = "3.15.2"
+pip = "24.0"
+psycopg = "3.2.3"
+psycopg2 = "2.9.9"
+sqlparse = "0.5.1"
+testcase = "0.1.0"
+typing-extensions = "4.12.2"
+tzdata = "2024.2"
+pillow = "^11.0.0"
+djangorestframework-simplejwt = "^5.3.1"
+path = "^17.0.0"
+drf-yasg = "^1.21.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

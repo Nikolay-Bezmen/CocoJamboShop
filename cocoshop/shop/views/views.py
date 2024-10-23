@@ -5,12 +5,16 @@ from django.http import HttpResponseNotFound
 from rest_framework import generics
 from shop.serializers import UserSerializer
 from django.shortcuts import render, redirect
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib import messages
 from shop.forms import UserRegistrationForm
 from shop.services.services import ProductService, CartServices, CartListService
 from shop.models import User, Products, Categories, CartItems, Carts
 from shop.serializers import ProductSerializer, UserSerializer, OrderSerializer
 from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -21,6 +25,13 @@ class UserViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = ProductService.get_all_products()
     serializer_class = ProductSerializer
+
+
+class ProtectedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response(data={"message": "This is a protected view!"})
 
 
 def user_register(request):
@@ -42,13 +53,16 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')
+            refresh = RefreshToken.for_user(user)
+            token_data = {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }
         else:
             error_message = "Неверные имя пользователя или пароль."
             return render(request, 'login/login.html', {'error_message': error_message})
 
     return render(request, 'login/login.html')
-
 
 def home(request):
     return render(request, 'main/index.html')
