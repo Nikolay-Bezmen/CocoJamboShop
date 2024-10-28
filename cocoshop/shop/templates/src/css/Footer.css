@@ -1,0 +1,43 @@
+footer {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 1200px;
+    margin: 50px auto;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-left h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.footer-center, .footer-right {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.language {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.active-lang {
+    color: #e67e22;
+}

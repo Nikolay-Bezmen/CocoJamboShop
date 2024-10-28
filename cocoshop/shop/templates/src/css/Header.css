@@ -1,0 +1,63 @@
+.header {
+    background-color: #e8e8e8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    color: black;
+}
+
+.logo h1 {
+    font-size: 24px;
+    line-height: 1.2;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.model-selector, .custom-select {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 5px 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+.custom-select select,
+.model-selector select {
+    appearance: none;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #333;
+}
+
+.icons {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.icon {
+    position: relative;
+    margin-left: 20px;
+    font-size: 24px;
+    color: gray;
+}
+
+.icon:hover {
+    color: black;
+}
+
+.badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: orange;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 12px;
+}

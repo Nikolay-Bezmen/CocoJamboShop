@@ -1,0 +1,34 @@
+/* src/components/OrderSummary.css */
+
+.order-summary {
+    flex: 1;
+    min-width: 300px;
+    padding: 20px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.total {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
