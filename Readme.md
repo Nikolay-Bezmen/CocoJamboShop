@@ -74,3 +74,49 @@ CocoJamboShop — это клиентская часть онлайн-магаз
 
 Frontend взаимодействует с backend API для получения данных о товарах, заказах и пользователях.
 
+# Проект на Django с использованием Swagger для документации
+
+## Установка и настройка
+1. Установите зависимости:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+2. Выполните миграции:
+    ```bash
+    python manage.py migrate
+    ```
+
+3. Запустите сервер:
+    ```bash
+    python manage.py runserver
+    ```
+
+## Доступ к документации
+
+После запуска сервера, документация API будет доступна по следующим URL:
+
+- **Swagger UI**: [http://localhost:8000/swagger/](http://localhost:8000/swagger/)
+- **ReDoc**: [http://localhost:8000/redoc/](http://localhost:8000/redoc/)
+- **JSON схема**: [http://localhost:8000/swagger.json](http://localhost:8000/swagger.json)
+- **YAML схема**: [http://localhost:8000/swagger.yaml](http://localhost:8000/swagger.yaml)
+
+## Использование с Postman
+1. Откройте Postman.
+2. Создайте новый запрос.
+3. Установите метод **POST** и URL [http://localhost:8000/api/token/](http://localhost:8000/api/token/).
+4. Перейдите на вкладку Body, выберите `raw`, установите формат в `JSON` и добавьте:
+    ```json
+    {
+        "username": "your_username",
+        "password": "your_password"
+    }
+    ```
+5. Отправьте запрос и получите токен.
+6. Используйте полученный токен для доступа к защищённым маршрутам, добавляя его в заголовок `Authorization` следующих запросов:
+    ```plaintext
+    Authorization: Bearer your_access_token
+    ```
+
+## Поддержка
+Если у вас возникли вопросы или проблемы, пожалуйста, свяжитесь с нашей командой поддержки.
