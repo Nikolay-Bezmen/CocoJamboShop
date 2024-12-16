@@ -30,7 +30,7 @@ class UserRegistrationForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Products
-        fields = ['name', 'description', 'price', 'stock', 'category', 'brand', 'image']
+        fields = ['name', 'description', 'price', 'stock', 'category', 'brand', 'image_url']
 
 
 class UserUpdateForm(forms.ModelForm):

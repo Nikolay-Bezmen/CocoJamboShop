@@ -14,6 +14,7 @@ from datetime import timedelta
 
 from pathlib import Path
 
+ALOWED_ADRESS_FOR_GROK = 'b5f5-79-170-109-137.ngrok-free.app'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -47,8 +48,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt',
     'drf_yasg',
-    'shop'
+    'corsheaders',
+    'shop',
+    'django_private_chat2.apps.DjangoPrivateChat2Config',
+
 ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://b5f5-79-170-109-137.ngrok-free.app/ '
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,9 +68,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'cocoshop.urls'
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",  # Адрес вашего React-приложения
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [
     {
@@ -85,8 +103,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
 }
 WSGI_APPLICATION = 'cocoshop.wsgi.application'
 
@@ -144,7 +162,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 print('MEDIA_ROOT:', MEDIA_ROOT)
 print('MEDIA_URL:', MEDIA_URL)
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
