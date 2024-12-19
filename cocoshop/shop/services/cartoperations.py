@@ -36,6 +36,29 @@ def add_to_cart(request, prid):
 
     return JsonResponse(response_data)
 
+@login_required
+@csrf_exempt
+def check_cart(request, prid):
+    """Check if a specific product is in the user's cart."""
+    cart = get_or_create_cart(request.user)
+    try:
+        cart_item = CartItems.objects.get(cart=cart, product_id=prid)
+        response_data = {
+            'status': 'success',
+            'message': f"{cart_item.product.name} is in the cart.",
+            'cart_item': {
+                'product_id': cart_item.product.id,
+                'quantity': cart_item.quantity
+            }
+        }
+    except CartItems.DoesNotExist:
+        response_data = {
+            'status': 'success',
+            'message': 'Product is not in the cart.',
+            'cart_item': None
+        }
+
+    return JsonResponse(response_data)
 
 @login_required
 @csrf_exempt

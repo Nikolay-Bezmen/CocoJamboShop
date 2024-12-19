@@ -31,6 +31,7 @@ def add_to_favourites(request, prid):
         }
     })
 
+
 @login_required
 @csrf_exempt
 def remove_from_favourites(request, prid):
@@ -50,3 +51,24 @@ def remove_from_favourites(request, prid):
         'status': 'success',
         'message': f"{product.name} removed from your favourites."
     })
+
+
+@login_required
+@csrf_exempt
+def check_favourites(request, prid):
+    """Check if a specific product is in the user's cart."""
+    product = get_object_or_404(Products, id=prid)
+    favourite = Favourite.objects.filter(user=request.user, product=product).first()
+
+    if not favourite:
+        return JsonResponse({
+            'status': 'error',
+            'message': f"{product.name} is not in your favourites."
+        }, status=404)
+    else:
+        response_data = {
+            'status': 'success',
+            'message': 'Product is not in the cart.',
+        }
+
+    return JsonResponse(response_data)

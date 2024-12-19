@@ -8,8 +8,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib import messages
 from shop.forms import UserRegistrationForm
 from shop.services.services import ProductService, CartServices, CartListService
-from shop.models import User, Products, Categories, CartItems, Carts
-from shop.serializers import UserSerializer, OrderSerializer, CartItemsSerializer, ProductSerializer
+from shop.models import User, Products, Categories, CartItems, Carts, Favourite
+from shop.serializers import UserSerializer, OrderSerializer, CartItemsSerializer, ProductSerializer, \
+    FavouriteSerializer
 from shop.services.cartoperations import get_or_create_cart
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -40,6 +41,19 @@ class CartItemsViewSet(viewsets.ModelViewSet):
         serializer.save(cart=cart)
 
 
+class FavouriteViewSet(viewsets.ModelViewSet):
+    serializer_class = FavouriteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Return all favourite items for the authenticated user
+        return Favourite.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Automatically associate the favourite item with the current user
+        serializer.save(user=self.request.user)
+
+
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
@@ -55,18 +69,41 @@ class ProtectedView(APIView):
 @csrf_exempt
 def user_register(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
+        try:
+            # Parse the JSON request body
+            data = json.loads(request.body)
+            form = UserRegistrationForm(data)
 
-        if form.is_valid():
-            user = form.save(commit=False)  # Сохраняем объект без записи в базу данных
-            print(user.id)
-            print(user.get_full_name())
-            user.save()  # Сохраняем объект и получаем его `id`
-            messages.success(request, 'Your account has been created successfully!')
-            return redirect('login')
-    else:
-        form = UserRegistrationForm()
-    return render(request, 'registration/register.html', {'form': form})
+            if form.is_valid():
+                # Save the user without immediately committing to the database
+                user = form.save(commit=True)
+                user.save()  # Commit to the database
+
+                return JsonResponse({
+                    "status": "success",
+                    "message": "Your account has been created successfully!",
+                    "user": {
+                        "id": user.id,
+                        "username": user.username,
+                        "email": user.email,
+                        "full_name": user.get_full_name(),
+                    }
+                }, status=201)
+            else:
+                # Collect form errors
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Invalid form data.",
+                    "errors": form.errors
+                }, status=400)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": "Request processing failed.",
+                "details": str(e)
+            }, status=400)
+
+    return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
 
 
 @csrf_exempt
@@ -99,31 +136,7 @@ def user_login(request):
     return JsonResponse({"status": "error", "message": "Метод не поддерживается."}, status=405)
 
 
-def home(request):
-    return render(request, 'main/index.html')
-
-
-def liked(request):
-    return render(request, 'main/liked.html', )
-
-
-def add_to_cart(request, product_id):
-    user_cart = Carts.objects.get(user=request.user)
-    user_items = CartItems.objects.create(cart=user_cart, product=product_id)
-    user_items.quantity += 1
-
-
-def shopping_cart(request):
-    user_cart = Carts.objects.get(user=request.user)
-    context = {
-        'cartItems': CartItems.objects.filter(cart=user_cart),
-    }
-    return render(request, 'main/shoppingCart.html', context)
-
-
 def page_not_found(request, exception):
     return HttpResponseNotFound("Page not found")
 
 
-def contacts(request):
-    return "contacts"
