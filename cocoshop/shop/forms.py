@@ -5,27 +5,25 @@ from .models import User, Products
 from django.contrib.auth.forms import UserCreationForm
 
 
+# forms.py
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
 class UserRegistrationForm(UserCreationForm):
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+    email = forms.EmailField(required=True)
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ("username", "email", "first_name", "last_name", "password1", "password2")
 
-    # def clean_password_confirm(self):
-    #     password = self.cleaned_data.get("password")
-    #     password_confirm = self.cleaned_data.get("password_confirm")
-    #     if password and password_confirm and password != password_confirm:
-    #         raise forms.ValidationError("Passwords don't match")
-    #     return password_confirm
-    #
-    # def save(self, commit=True):
-    #     user = super().save(commit=False)
-    #     user.set_password(self.cleaned_data["password"])
-    #     if commit:
-    #         user.save()
-    #     return user
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("This email is already registered.")
+        return email
 
 
 class ProductForm(forms.ModelForm):

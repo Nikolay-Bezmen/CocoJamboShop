@@ -16,7 +16,14 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'vladklichko72@gmail.com'  # Ваша почта
+EMAIL_HOST_PASSWORD = 'yomn dook nten nqfc'  # Пароль приложения или почты
+DEFAULT_FROM_EMAIL = 'vladklichko72@gmail.com'
+# FRONTEND_URL=""
 #BASE_DIR: C:\Users\rubes\PycharmProjects\MyProject-server\myproject\CocoJamboShop\cocoshop
 
 
