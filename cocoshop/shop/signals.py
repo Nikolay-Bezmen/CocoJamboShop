@@ -7,4 +7,4 @@ from .models import Carts
 @receiver(post_save, sender=User)
 def create_user_cart(sender, instance, created, **kwargs):
     if created:
-        Carts.objects.create(user_id=instance)
+        Carts.objects.create(user_id=instance.id)

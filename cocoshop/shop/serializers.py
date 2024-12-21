@@ -42,10 +42,12 @@ class FavouriteSerializer(serializers.ModelSerializer):
     product_price = serializers.DecimalField(source='product.price', max_digits=10, decimal_places=2, read_only=True)
     product_brand = BrandsSerializer(source='product.brand', read_only=True)
     product_category = CategoriesSerializer(source='product.category', read_only=True)
+    product_id = serializers.IntegerField(source='product.id', read_only=True)  # Explicitly map the product ID
+    product_image = serializers.CharField(source='product.image_url', read_only=True)
 
     class Meta:
         model = Favourite
-        fields = ['id', 'product', 'product_name', 'product_price', 'product_brand', 'product_category']
+        fields = ['id', 'product_id', 'product_name', 'product_price', 'product_brand', 'product_category', 'product_image']
 
 
 class CartItemsSerializer(serializers.ModelSerializer):
@@ -54,10 +56,11 @@ class CartItemsSerializer(serializers.ModelSerializer):
     product_brand = BrandsSerializer(source='product.brand', read_only=True)
     product_category = CategoriesSerializer(source='product.category', read_only=True)
     product_image = serializers.CharField(source='product.image_url', read_only=True)
+    product_id = serializers.IntegerField(source='product.id', read_only=True)  # Explicitly map the product ID
 
     class Meta:
         model = CartItems
-        fields = ['id', 'product', 'product_name', 'product_price', 'quantity', 'product_brand', 'product_category',
+        fields = ['id', 'product_id', 'product_name', 'product_price', 'quantity', 'product_brand', 'product_category',
                   'product_image']
 
 

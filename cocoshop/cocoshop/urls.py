@@ -2,7 +2,7 @@
 import django_private_chat2.views
 from django.contrib import admin
 from django.urls import include, path, re_path
-from shop.views import ProductViewSet, UserViewSet, ProtectedView, CartItemsViewSet, FavouriteViewSet
+from shop.views import ProductViewSet, UserViewSet, CartItemsViewSet, FavouriteViewSet
 from shop.services import cartoperations, liked
 from django.conf import settings
 from django.conf.urls.static import static
@@ -48,7 +48,6 @@ urlpatterns = [
                   path("api/clear-cart/", cartoperations.clear_cart, name="ClearCart"),
                   path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
                   path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-                  path('api/protected/', ProtectedView.as_view(), name='protected_view'),
                   re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0),
                           name='schema-json'),
                   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

@@ -5,16 +5,16 @@ from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
-
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 def get_or_create_cart(user):
     """Retrieve the current user's cart or create a new one."""
     cart, created = Carts.objects.get_or_create(user=user)
     return cart
 
-
-@login_required
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_to_cart(request, prid):
     """Add a product to the cart or update its quantity if it already exists."""
     cart = get_or_create_cart(request.user)
@@ -36,32 +36,25 @@ def add_to_cart(request, prid):
 
     return JsonResponse(response_data)
 
-@login_required
-@csrf_exempt
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def check_cart(request, prid):
     """Check if a specific product is in the user's cart."""
     cart = get_or_create_cart(request.user)
-    try:
-        cart_item = CartItems.objects.get(cart=cart, product_id=prid)
-        response_data = {
-            'status': 'success',
-            'message': f"{cart_item.product.name} is in the cart.",
-            'cart_item': {
-                'product_id': cart_item.product.id,
-                'quantity': cart_item.quantity
-            }
-        }
-    except CartItems.DoesNotExist:
-        response_data = {
-            'status': 'success',
-            'message': 'Product is not in the cart.',
-            'cart_item': None
-        }
+    cart_item = CartItems.objects.filter(cart=cart, product_id=prid).first()
 
-    return JsonResponse(response_data)
+    return JsonResponse({
+        'status': 'success',
+        'isInCart': cart_item is not None,
+        'message': 'Product status in cart checked successfully.',
+        'cart_item': {
+            'product_id': cart_item.product.id,
+            'quantity': cart_item.quantity
+        } if cart_item else None
+    })
 
-@login_required
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def delete_from_cart(request, prid):
     """Decrease the quantity of a specific product in the cart by 1."""
     cart = get_or_create_cart(request.user)
@@ -97,9 +90,8 @@ def delete_from_cart(request, prid):
 
     return JsonResponse(response_data)
 
-
-@login_required
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def delete_all_from_cart(request, prid):
     """Remove all quantities of a specific product from the cart."""
     cart = get_or_create_cart(request.user)
@@ -120,9 +112,8 @@ def delete_all_from_cart(request, prid):
     return JsonResponse(response_data)
 
 
-
-@login_required
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def clear_cart(request):
     """Clear all items from the cart."""
     cart = get_or_create_cart(request.user)

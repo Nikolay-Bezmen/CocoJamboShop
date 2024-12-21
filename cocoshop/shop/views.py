@@ -1,32 +1,31 @@
-# shop/views.py
+# views.py
 
 from django.contrib.auth import login, authenticate
-from django.http import HttpResponseNotFound
-from rest_framework import generics
-from django.shortcuts import render, redirect
+from django.http import HttpResponseNotFound, JsonResponse
+from rest_framework import generics, viewsets, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib import messages
-from shop.forms import UserRegistrationForm
-from shop.services.services import ProductService, CartServices, CartListService
-from shop.models import User, Products, Categories, CartItems, Carts, Favourite
-from shop.serializers import UserSerializer, OrderSerializer, CartItemsSerializer, ProductSerializer, \
-    FavouriteSerializer
-from shop.services.cartoperations import get_or_create_cart
-from rest_framework import viewsets
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status
-from rest_framework.decorators import api_view
+from shop.forms import UserRegistrationForm
+from shop.models import User, Products, CartItems, Favourite
+from shop.serializers import (
+    UserSerializer, CartItemsSerializer, ProductSerializer, 
+    FavouriteSerializer
+)
+from shop.services.cartoperations import get_or_create_cart
 import json
-from django.http import JsonResponse
-
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
+    permission_classes = [IsAuthenticated]
+    
+    def get_permissions(self):
+        if self.action in ['create']:
+            return [AllowAny()]
+        return super().get_permissions()
 
 class CartItemsViewSet(viewsets.ModelViewSet):
     serializer_class = CartItemsSerializer
@@ -40,48 +39,45 @@ class CartItemsViewSet(viewsets.ModelViewSet):
         cart = get_or_create_cart(self.request.user)
         serializer.save(cart=cart)
 
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Products.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]  # Разрешаем просмотр продуктов всем
+    
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAuthenticated()]
+        return [AllowAny()]
 
 class FavouriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavouriteSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Return all favourite items for the authenticated user
         return Favourite.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        # Automatically associate the favourite item with the current user
         serializer.save(user=self.request.user)
 
-
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Products.objects.all()
-    serializer_class = ProductSerializer
-
-
-class ProtectedView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        return Response(data={"message": "This is a protected view!"})
-
-
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def user_register(request):
     if request.method == 'POST':
         try:
-            # Parse the JSON request body
             data = json.loads(request.body)
             form = UserRegistrationForm(data)
 
             if form.is_valid():
-                # Save the user without immediately committing to the database
-                user = form.save(commit=True)
-                user.save()  # Commit to the database
-
+                user = form.save()
+                refresh = RefreshToken.for_user(user)
+                
                 return JsonResponse({
                     "status": "success",
                     "message": "Your account has been created successfully!",
+                    "tokens": {
+                        "refresh": str(refresh),
+                        "access": str(refresh.access_token),
+                    },
                     "user": {
                         "id": user.id,
                         "username": user.username,
@@ -90,7 +86,6 @@ def user_register(request):
                     }
                 }, status=201)
             else:
-                # Collect form errors
                 return JsonResponse({
                     "status": "error",
                     "message": "Invalid form data.",
@@ -105,38 +100,33 @@ def user_register(request):
 
     return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
 
-
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def user_login(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)  # Читаем тело запроса
-            username = data.get("username")
-            password = data.get("password")
+    try:
+        data = json.loads(request.body)
+        username = data.get("username")
+        password = data.get("password")
 
-            # Аутентификация пользователя
-            user = authenticate(request, username=username, password=password)
-            print("-------------------------------------------------------------------")
-            if user is not None:
-                login(request, user)
-
-                # Создание токенов
-                refresh = RefreshToken.for_user(user)
-                token_data = {
-                    'refresh': str(refresh),
-                    'access': str(refresh.access_token),
+        user = authenticate(username=username, password=password)
+        
+        if user is not None:
+            refresh = RefreshToken.for_user(user)
+            return JsonResponse({
+                "status": "success",
+                "tokens": {
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
                 }
-
-                return JsonResponse({"status": "success", "tokens": token_data}, status=200)
-            else:
-                return JsonResponse({"status": "error", "message": "Неверные имя пользователя или пароль."}, status=401)
-        except Exception as e:
-            return JsonResponse({"status": "error", "message": "Ошибка обработки запроса.", "details": str(e)},
-                                status=400)
-    return JsonResponse({"status": "error", "message": "Метод не поддерживается."}, status=405)
-
-
-def page_not_found(request, exception):
-    return HttpResponseNotFound("Page not found")
-
-
+            }, status=200)
+        else:
+            return JsonResponse({
+                "status": "error",
+                "message": "Invalid credentials."
+            }, status=401)
+    except Exception as e:
+        return JsonResponse({
+            "status": "error",
+            "message": "Request processing failed.",
+            "details": str(e)
+        }, status=400)

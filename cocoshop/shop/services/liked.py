@@ -4,71 +4,59 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from shop.models import Products, Favourite
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
-
-@login_required
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_to_favourites(request, prid):
     """Add a product to the user's favourites."""
     product = get_object_or_404(Products, id=prid)
-
-    # Check if the product is already in the user's favourites
     favourite, created = Favourite.objects.get_or_create(user=request.user, product=product)
 
-    if not created:
-        return JsonResponse({
-            'status': 'error',
-            'message': f"{product.name} is already in your favourites."
-        }, status=400)
-
-    messages.success(request, f"{product.name} added to your favourites.")
     return JsonResponse({
         'status': 'success',
-        'message': f"{product.name} added to your favourites.",
+        'message': f"{product.name} {'added to' if created else 'already in'} your favourites.",
         'favourite_item': {
             'product_id': favourite.product.id,
             'product_name': favourite.product.name
         }
     })
 
-
-@login_required
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def remove_from_favourites(request, prid):
     """Remove a product from the user's favourites."""
     product = get_object_or_404(Products, id=prid)
     favourite = Favourite.objects.filter(user=request.user, product=product).first()
 
-    if not favourite:
-        return JsonResponse({
-            'status': 'error',
-            'message': f"{product.name} is not in your favourites."
-        }, status=404)
+    if favourite:
+        favourite.delete()
+        message = f"{product.name} removed from your favourites."
+    else:
+        message = f"{product.name} is not in your favourites."
 
-    favourite.delete()
-    messages.success(request, f"{product.name} removed from your favourites.")
     return JsonResponse({
         'status': 'success',
-        'message': f"{product.name} removed from your favourites."
+        'message': message
     })
 
-
-@login_required
-@csrf_exempt
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def check_favourites(request, prid):
-    """Check if a specific product is in the user's cart."""
-    product = get_object_or_404(Products, id=prid)
-    favourite = Favourite.objects.filter(user=request.user, product=product).first()
-
-    if not favourite:
+    """Check if a specific product is in the user's favourites."""
+    try:
+        product = Products.objects.get(id=prid)
+        is_favourite = Favourite.objects.filter(user=request.user, product=product).exists()
+        
+        return JsonResponse({
+            'status': 'success',
+            'isFavourite': is_favourite,
+            'message': f"Product {'is' if is_favourite else 'is not'} in favourites."
+        })
+    except Products.DoesNotExist:
         return JsonResponse({
             'status': 'error',
-            'message': f"{product.name} is not in your favourites."
-        }, status=404)
-    else:
-        response_data = {
-            'status': 'success',
-            'message': 'Product is not in the cart.',
-        }
-
-    return JsonResponse(response_data)
+            'isFavourite': False,
+            'message': f"Product with id {prid} not found."
+        })

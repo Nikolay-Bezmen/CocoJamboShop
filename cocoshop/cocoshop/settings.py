@@ -14,7 +14,6 @@ from datetime import timedelta
 
 from pathlib import Path
 
-ALOWED_ADRESS_FOR_GROK = 'b5f5-79-170-109-137.ngrok-free.app'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -51,34 +50,67 @@ INSTALLED_APPS = [
     'corsheaders',
     'shop',
     'django_private_chat2.apps.DjangoPrivateChat2Config',
+    'rest_framework_simplejwt.token_blacklist',
 
 ]
-CSRF_TRUSTED_ORIGINS = [
-    'https://b5f5-79-170-109-137.ngrok-free.app/ '
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
+
+CORS_ALLOW_ALL_ORIGINS = True  # Только для разработки!
+# Разрешить запросы с credentials (cookies, authorization headers)
+CORS_ALLOW_CREDENTIALS = True
+
+# Разрешенные источники запросов (ваш фронтенд)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React приложение
+    "http://127.0.0.1:3000",
 ]
 
+# Разрешенные HTTP методы
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+# Разрешенные заголовки
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
+
 
 ROOT_URLCONF = 'cocoshop.urls'
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",  # Адрес вашего React-приложения
-# ]
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [
     {
@@ -103,8 +135,12 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
 }
 WSGI_APPLICATION = 'cocoshop.wsgi.application'
 
@@ -114,8 +150,8 @@ WSGI_APPLICATION = 'cocoshop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb',  # Имя базы данных (то же, что указано в POSTGRES_DB)
-        'USER': 'postgres',  # Пользователь базы данных (то же, что указано в POSTGRES_USER)
+        'NAME': 'cocoshop_db',  # Имя базы данных (то же, что указано в POSTGRES_DB)
+        'USER': 'postgres',  # Пользователь базы данных (то же, что указано     +в POSTGRES_USER)
         'PASSWORD': '228337',  # Пароль (то же, что указано в POSTGRES_PASSWORD)
         'HOST': 'localhost',  # "db" — это имя сервиса из docker-compose
         'PORT': '5432',  # Стандартный порт PostgreSQL
