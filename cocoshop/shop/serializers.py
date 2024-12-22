@@ -1,8 +1,38 @@
 # shop/serializers.py
 
 from rest_framework import serializers
-from .models import User, Products, Order, CartItems, Brands, Categories, Favourite
+from .models import User, Products, Order, CartItems, Brands, Categories, Favourite, OrderItem
+from .models import ChatRoom, ChatMessage
 
+class ChatMessageSerializer(serializers.ModelSerializer):
+    sender_name = serializers.CharField(source='sender.username', read_only=True)
+    
+    class Meta:
+        model = ChatMessage
+        fields = ['id', 'sender_name', 'message', 'created_at', 'is_read']
+        read_only_fields = ['is_read']
+
+class ChatRoomSerializer(serializers.ModelSerializer):
+    last_message = serializers.SerializerMethodField()
+    unread_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ChatRoom
+        fields = ['id', 'created_at', 'updated_at', 'is_active', 'last_message', 'unread_count']
+
+    def get_last_message(self, obj):
+        last_message = obj.messages.last()
+        if last_message:
+            return ChatMessageSerializer(last_message).data
+        return None
+
+    def get_unread_count(self, obj):
+        return obj.messages.filter(is_read=False).exclude(sender=obj.user).count()
+    
+    def create(self, validated_data):
+        # Добавьте проверку или передайте user в validated_data
+        validated_data['user'] = self.context['request'].user  # Убедитесь, что 'user' есть в контексте
+        return super().create(validated_data)
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,10 +61,24 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'price', 'brand', 'category', 'image_url']
 
 
+class OrderItemSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'product_id', 'product_name', 'quantity', 'price']
+
 class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True, read_only=True)
+    
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = [
+            'id', 'created_at', 'status', 'total_price',
+            'full_name', 'email', 'phone', 'address',
+            'city', 'postal_code', 'shipping_notes', 'items'
+        ]
+        read_only_fields = ['id', 'created_at', 'status', 'total_price']
 
 
 class FavouriteSerializer(serializers.ModelSerializer):

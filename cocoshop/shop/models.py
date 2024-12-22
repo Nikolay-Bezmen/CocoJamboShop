@@ -41,7 +41,28 @@ class Carts(models.Model):
     def __str__(self):
         return f'Cart {self.id} for {self.user.username} with id: {self.user}'
 
+class ChatRoom(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_rooms')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return f'Chat with {self.user.username}'
+
+class ChatMessage(models.Model):
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Message from {self.sender.username} at {self.created_at}'
+
+    class Meta:
+        ordering = ['created_at']
+        
 class CartItems(models.Model):
     cart = models.ForeignKey(Carts, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
@@ -61,10 +82,36 @@ class Favourite(models.Model):
 
 
 class Order(models.Model):
+    ORDER_STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('processing', 'Processing'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
+        ('cancelled', 'Cancelled')
+    )
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='pending')
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.BooleanField(default=False, blank=True, null=False)
+    
+    # Shipping information
+    full_name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    address = models.TextField()
+    city = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=20)
+    shipping_notes = models.TextField(blank=True, null=True)
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey('Products', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # Цена на момент заказа
+    
+    def get_total(self):
+        return self.quantity * self.price
 
 class EmailVerificationToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -75,10 +122,3 @@ class EmailVerificationToken(models.Model):
     def is_valid(self):
         return timezone.now() <= self.expires_at
 
-class OrderItems(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(blank=False)
-
-    def __str__(self):
-        return f'Order {self.order_id} by {self.order.user.username}'

@@ -2,7 +2,7 @@
 import django_private_chat2.views
 from django.contrib import admin
 from django.urls import include, path, re_path
-from shop.views import ProductViewSet, UserViewSet, CartItemsViewSet, FavouriteViewSet
+from shop.views import ProductViewSet, UserViewSet, CartItemsViewSet, FavouriteViewSet, ChatViewSet
 from shop.services import cartoperations, liked
 from django.conf import settings
 from django.conf.urls.static import static
@@ -20,7 +20,7 @@ router.register(r'products', ProductViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'cart-items', CartItemsViewSet, basename='cart')
 router.register(r'favourites', FavouriteViewSet, basename='favourites')
-
+router.register(r'chat', ChatViewSet, basename='chat')
 
 schema_view = get_schema_view(
     openapi.Info(

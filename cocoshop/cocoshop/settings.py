@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     'shop',
     'django_private_chat2.apps.DjangoPrivateChat2Config',
     'rest_framework_simplejwt.token_blacklist',
-
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True  # Только для разработки!
