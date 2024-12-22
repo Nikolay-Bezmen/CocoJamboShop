@@ -96,12 +96,12 @@ class Order(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     
     # Shipping information
-    full_name = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
-    address = models.TextField()
-    city = models.CharField(max_length=100)
-    postal_code = models.CharField(max_length=20)
+    full_name = models.CharField(max_length=100, default="Unknown full_name")
+    email = models.EmailField(default="Unknown email")
+    phone = models.CharField(max_length=20, default="Unknown phone")
+    address = models.TextField(default="Unknown address")
+    city = models.CharField(default="Unknown city", max_length=100)
+    postal_code = models.CharField(max_length=20, default="Postal code")
     shipping_notes = models.TextField(blank=True, null=True)
 
 class OrderItem(models.Model):
