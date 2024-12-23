@@ -35,7 +35,13 @@ SECRET_KEY = 'django-insecure-@c*i=7l_-gb$vlx^jtr@lfl6ybq7j-&rpn-ca%4cr%navq=u5#
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+CSRF_COOKIE_SAMESITE = 'Lax'  # or 'None' if your frontend is on a different domain
+CSRF_COOKIE_DOMAIN = None     # or set to your domain if needed
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
+CSRF_USE_SESSIONS = False  
 ALLOWED_HOSTS = ['*']
 
 # myproject/settings.py
@@ -43,7 +49,6 @@ LOGIN_URL = '/login/'  # URL для страницы входа
 LOGIN_REDIRECT_URL = '/'  # URL для перенаправления после входа
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

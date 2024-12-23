@@ -14,7 +14,6 @@ urlpatterns = [
     path('login/', user_login, name='login'),
     path('register/', user_register, name='register'),
     path('verify-email/<str:token>/', verify_email, name='verify-email'),
-    path('orders/create_from_cart/', OrderViewSet.as_view({'post': 'create_from_cart'}))
 
 
 

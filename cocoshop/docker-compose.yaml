@@ -1,36 +1,32 @@
-version: '3.8'
 
 services:
-  db:
-    image: postgres:13
-    container_name: postgres_db
-    networks:
-      - djangonetwork
-    restart: always
-    environment:
-      POSTGRES_DB: mydb  # Имя базы данных
-      POSTGRES_USER: myuser  # Пользователь базы данных
-      POSTGRES_PASSWORD: mypassword  # Пароль пользователя
-    volumes:
-      - postgres_data:/var/lib/postgresql/data  # Для хранения данных вне контейнера
-    ports:
-      - "5432:5432"  # Пробрасываем порт 5432
-
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code  # Монтируем весь проект в контейнер
+      - .:/app
+      - media_volume:/app/media
     ports:
-      - "8000:8000"  # Пробрасываем порт для доступа к Django
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+      - DEBUG=1
     depends_on:
-      - db  # Сервис web будет ждать готовности базы данных
-    links:
-      - db:db
-    networks:
-      - djangonetwork
-networks:
-    djangonetwork:
-        driver: bridge
+      - db
+    restart: always
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
 volumes:
   postgres_data:
+  media_volume:

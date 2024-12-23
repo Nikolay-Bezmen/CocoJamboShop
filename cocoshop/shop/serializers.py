@@ -69,16 +69,27 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'product_id', 'product_name', 'quantity', 'price']
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True, read_only=True)
-    
     class Meta:
         model = Order
         fields = [
-            'id', 'created_at', 'status', 'total_price',
-            'full_name', 'email', 'phone', 'address',
-            'city', 'postal_code', 'shipping_notes', 'items'
+            'id', 'full_name', 'email', 'phone', 'address', 
+            'city', 'postal_code', 'shipping_notes', 'total_price', 
+            'status', 'created_at'
         ]
-        read_only_fields = ['id', 'created_at', 'status', 'total_price']
+        read_only_fields = ['id', 'status', 'created_at']
+
+    def validate_total_price(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Total price must be greater than zero")
+        return value
+
+    def validate(self, data):
+        # Ensure all required fields are present
+        required_fields = ['full_name', 'email', 'phone', 'address', 'city', 'postal_code', 'total_price']
+        for field in required_fields:
+            if field not in data:
+                raise serializers.ValidationError(f"{field} is required")
+        return data
 
 
 class FavouriteSerializer(serializers.ModelSerializer):
