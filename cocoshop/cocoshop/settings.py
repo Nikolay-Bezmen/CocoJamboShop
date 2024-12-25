@@ -40,6 +40,8 @@ CSRF_COOKIE_DOMAIN = None     # or set to your domain if needed
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    "http://10.160.108.113"
+
 ]
 CSRF_USE_SESSIONS = False  
 ALLOWED_HOSTS = ['*']
@@ -73,6 +75,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React приложение
     "http://127.0.0.1:3000",
+    "http://10.160.108.113"
 ]
 
 # Разрешенные HTTP методы
